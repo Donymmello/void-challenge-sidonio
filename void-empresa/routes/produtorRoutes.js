@@ -1,9 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const produtorController = require('../controllers/produtorController');
+const ctrl = require('../controllers/produtorController');
 
-router.post('/', produtorController.cadastrarProdutor);
-router.post('/atribuir', produtorController.atribuirProdutor);
-router.put('/transferir', produtorController.transferirProdutor);
+router.post('/', ctrl.cadastrarProdutor);
+router.get('/', ctrl.listarProdutores);
+router.get('/:id', ctrl.obterProdutor);
+router.put('/:id', ctrl.atualizarProdutor);
+router.delete('/:id', ctrl.removerProdutor);
+
+router.post('/atribuir', ctrl.atribuirProdutor);
+router.put('/transferir', ctrl.transferirProdutor);
 
 module.exports = router;

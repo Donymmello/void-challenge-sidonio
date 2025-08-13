@@ -6,6 +6,7 @@ const empresaRoutes = require('./routes/empresaRoutes');
 const campanhaRoutes = require('./routes/campanhaRoutes');
 const tecnicoRoutes = require('./routes/tecnicoRoutes');
 const produtorRoutes = require('./routes/produtorRoutes');
+const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 app.use(cors());
@@ -19,6 +20,7 @@ app.use('/empresas', empresaRoutes);
 app.use('/campanhas', campanhaRoutes);
 app.use('/tecnicos', tecnicoRoutes);
 app.use('/produtores', produtorRoutes);
+app.use(errorHandler);
 
 // Sincronizar models com banco
 sequelize.sync({ alter: true }).then(() => console.log('Banco sincronizado com Sequelize!'));

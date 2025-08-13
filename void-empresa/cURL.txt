@@ -9,7 +9,16 @@ curl -X POST http://localhost:3000/empresas \
   "email": "mail@void.com"
 }'
 
-2 Criar Campanha
+2 Listar empresas
+curl -X GET http://localhost:3000/empresas
+
+3 Actualizar empresa
+curl -X PUT http://localhost:3000/empresas/1 \
+
+4 Apagar empresa
+curl -X DELETE http://localhost:3000/empresas/1
+
+5 Criar Campanha
 
 curl -X POST http://localhost:3000/campanhas \
 -H "Content-Type: application/json" \
@@ -20,7 +29,16 @@ curl -X POST http://localhost:3000/campanhas \
   "data_fim": "2025-12-31"
 }'
 
-3 Criar Técnico
+6 Listar Campanha
+curl -X GET http://localhost:3000/campanhas
+
+7 Actualizar campanha
+curl -X PUT http://localhost:3000/campanhas/1 \
+
+8 Apagar campanha
+curl -X DELETE http://localhost:3000/campanhas/1
+
+9 Criar Técnico
 
 curl -X POST http://localhost:3000/tecnicos \
 -H "Content-Type: application/json" \
@@ -29,7 +47,16 @@ curl -X POST http://localhost:3000/tecnicos \
   "campanha_id": 1
 }'
 
-4 Criar Produtor
+10 Listar Tecnicos
+curl -X GET http://localhost:3000/tecnicos
+
+11 Actualizar Tecnicos
+curl -X PUT http://localhost:3000/tecnicos/1 \
+
+12 Apagar Tecnicos 
+curl -X DELETE http://localhost:3000/tecnicos/1
+
+13 Criar Produtor
 
 curl -X POST http://localhost:3000/produtores \
 -H "Content-Type: application/json" \
@@ -38,7 +65,16 @@ curl -X POST http://localhost:3000/produtores \
   "localizacao": "Distrito X"
 }'
 
-5 Atribuir Produtor a Técnico
+14 Listar Produtores
+curl -X GET http://localhost:3000/produtores
+
+15 Actualizar Produtores
+curl -X PUT http://localhost:3000/produtores/1 \
+
+16 Apagar Produtores
+curl -X DELETE http://localhost:3000/produtores/1
+
+17 Atribuir Produtor a Técnico
 
 curl -X POST http://localhost:3000/produtores/atribuir \
 -H "Content-Type: application/json" \
@@ -48,7 +84,7 @@ curl -X POST http://localhost:3000/produtores/atribuir \
   "campanha_id": 1
 }'
 
-6 Transferir Produtor de Técnico
+18 Transferir Produtor de Técnico
 
 curl -X PUT http://localhost:3000/produtores/transferir \
 -H "Content-Type: application/json" \
@@ -59,6 +95,6 @@ curl -X PUT http://localhost:3000/produtores/transferir \
   "campanha_id": 1
 }'
 
-7 Listar Produtores por Técnico
+19 Listar Produtores por Técnico
 
 curl -X GET http://localhost:3000/tecnicos/1/produtores

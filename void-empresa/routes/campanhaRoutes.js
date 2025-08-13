@@ -1,7 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const campanhaController = require('../controllers/campanhaController');
+const ctrl = require('../controllers/campanhaController');
 
-router.post('/', campanhaController.cadastrarCampanha);
+router.post('/', ctrl.cadastrarCampanha);
+router.get('/', ctrl.listarCampanhas);
+router.get('/:id', ctrl.obterCampanha);
+router.put('/:id', ctrl.atualizarCampanha);
+router.delete('/:id', ctrl.removerCampanha);
 
 module.exports = router;

@@ -1,73 +1,88 @@
-const { body, validationResult } = require('express-validator');
-const Produtor = require('../models/Produtor');
+const { body, validationResult, param } = require('express-validator');
+const service = require('../services/produtorService');
 const ProdutorCampanha = require('../models/ProdutorCampanha');
 
 exports.cadastrarProdutor = [
-    body('nome').notEmpty().withMessage('Nome é obrigatório'),
-    body('localizacao').notEmpty().withMessage('Localização é obrigatória'),
-    async (req, res) => {
+    body('nome').notEmpty(),
+    body('localizacao').notEmpty(),
+    async (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
         try {
-            const produtor = await Produtor.create(req.body);
+            const produtor = await service.create(req.body);
             res.status(201).json(produtor);
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
+        } catch (err) { next(err); }
+    }
+];
+
+exports.listarProdutores = async (req, res, next) => {
+    try {
+        res.json(await service.findAll());
+    } catch (err) { next(err); }
+};
+
+exports.obterProdutor = [
+    param('id').isInt(),
+    async (req, res, next) => {
+        try {
+            const produtor = await service.findById(req.params.id);
+            if (!produtor) return res.status(404).json({ error: 'Produtor não encontrado' });
+            res.json(produtor);
+        } catch (err) { next(err); }
+    }
+];
+
+exports.atualizarProdutor = [
+    param('id').isInt(),
+    async (req, res, next) => {
+        try {
+            const produtor = await service.update(req.params.id, req.body);
+            if (!produtor) return res.status(404).json({ error: 'Produtor não encontrado' });
+            res.json(produtor);
+        } catch (err) { next(err); }
+    }
+];
+
+exports.removerProdutor = [
+    param('id').isInt(),
+    async (req, res, next) => {
+        try {
+            const ok = await service.remove(req.params.id);
+            if (!ok) return res.status(404).json({ error: 'Produtor não encontrado' });
+            res.status(204).send();
+        } catch (err) { next(err); }
     }
 ];
 
 exports.atribuirProdutor = [
-    body('produtor_id').notEmpty(),
-    body('tecnico_id').notEmpty(),
-    body('campanha_id').notEmpty(),
-    async (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-
+    body('produtor_id').isInt(),
+    body('tecnico_id').isInt(),
+    body('campanha_id').isInt(),
+    async (req, res, next) => {
         try {
-            const pc = await ProdutorCampanha.create(req.body);
-            res.json({ message: 'Produtor atribuído com sucesso', data: pc });
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
+            const relacao = await ProdutorCampanha.create(req.body);
+            res.status(201).json({ message: 'Produtor atribuído com sucesso', relacao });
+        } catch (err) { next(err); }
     }
 ];
 
 exports.transferirProdutor = [
-    body('produtor_id').notEmpty(),
-    body('tecnico_antigo_id').notEmpty(),
-    body('tecnico_novo_id').notEmpty(),
-    body('campanha_id').notEmpty(),
-
-    async (req, res) => {
-        console.log('Recebendo requisição PUT /produtores/transferir:', req.body);
-
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) { 
-            console.log('Erros de validação:', errors.array());                       
-             return res.status(400).json({ errors: errors.array() });
-        }
-
+    body('produtor_id').isInt(),
+    body('tecnico_antigo_id').isInt(),
+    body('tecnico_novo_id').isInt(),
+    body('campanha_id').isInt(),
+    async (req, res, next) => {
         try {
             const { produtor_id, tecnico_antigo_id, tecnico_novo_id, campanha_id } = req.body;
-            console.log('Dados recebidos:', { produtor_id, tecnico_antigo_id, tecnico_novo_id, campanha_id });
-            const pc = await ProdutorCampanha.findOne({ where: { produtor_id, tecnico_id: tecnico_antigo_id, campanha_id } });
-            if (!pc) return res.status(404).json({ error: 'Relacionamento não encontrado' });
+            const relacao = await ProdutorCampanha.findOne({
+                where: { produtor_id, tecnico_id: tecnico_antigo_id, campanha_id }
+            });
+            if (!relacao) return res.status(404).json({ error: 'Relacionamento não encontrado' });
 
-            pc.tecnico_id = tecnico_novo_id;
-            pc.data_transferencia = new Date();
-            await pc.save();
-
-            res.json({ message: 'Produtor transferido com sucesso', data: pc });
-        } catch (err) {
-            console.error('Erro ao transferir produtor:', err);
-            // Verifica se é erro de relacionamento não encontrado
-            if (err.name === 'SequelizeForeignKeyConstraintError') {
-                return res.status(400).json({ error: 'Relacionamento inválido' });
-            }
-            res.status(500).json({ error: err.message });
-        }
+            relacao.tecnico_id = tecnico_novo_id;
+            await relacao.save();
+            res.json({ message: 'Produtor transferido com sucesso', relacao });
+        } catch (err) { next(err); }
     }
 ];

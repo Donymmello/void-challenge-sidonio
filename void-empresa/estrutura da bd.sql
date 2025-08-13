@@ -1,4 +1,3 @@
-USE void_empresa;
 
 -- 1. Empresas
 CREATE TABLE empresas (

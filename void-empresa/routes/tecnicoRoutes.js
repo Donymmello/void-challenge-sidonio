@@ -1,8 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const tecnicoController = require('../controllers/tecnicoController');
+const ctrl = require('../controllers/tecnicoController');
 
-router.post('/', tecnicoController.cadastrarTecnico);
-router.get('/:id/produtores', tecnicoController.listarProdutoresPorTecnico);
+router.post('/', ctrl.cadastrarTecnico);
+router.get('/', ctrl.listarTecnicos);
+router.get('/:id', ctrl.obterTecnico);
+router.put('/:id', ctrl.atualizarTecnico);
+router.delete('/:id', ctrl.removerTecnico);
+router.get('/:id/produtores', ctrl.listarProdutoresPorTecnico);
 
 module.exports = router;
